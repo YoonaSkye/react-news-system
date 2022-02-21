@@ -4,7 +4,6 @@ import RootRouter from "./router/RootRouter";
 function App() {
   return (
     <div className="App">
-      App
       <RootRouter />
     </div>
   );

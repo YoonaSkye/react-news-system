@@ -1,5 +1,11 @@
 import React from "react";
+import { Button } from "antd";
 
 export default function Home() {
-  return <div>Home</div>;
+  return (
+    <div>
+      Home
+      <Button type="primary">click</Button>
+    </div>
+  );
 }
