@@ -2,11 +2,7 @@ import "./App.css";
 import RootRouter from "./router/RootRouter";
 
 function App() {
-  return (
-    <div className="App">
-      <RootRouter />
-    </div>
-  );
+  return <RootRouter />;
 }
 
 export default App;
