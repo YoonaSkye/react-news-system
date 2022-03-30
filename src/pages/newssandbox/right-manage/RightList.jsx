@@ -19,16 +19,6 @@ export default function RightList() {
     });
   }, []);
 
-  const onChange = () => {
-    console.log("修改");
-  };
-
-  const content = (
-    <div>
-      <Switch defaultChecked onChange={onChange} />
-    </div>
-  );
-
   const columns = [
     {
       title: "ID",
@@ -54,13 +44,46 @@ export default function RightList() {
             icon={<DeleteOutlined />}
             onClick={() => showConfirm(text)}
           />
-          <Popover content={content} title="页面配置项" trigger="click">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+          <Popover
+            content={content(text)}
+            title="页面配置项"
+            trigger={text.pagepermisson === undefined ? "" : "click"}
+          >
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<EditOutlined />}
+              disabled={text.pagepermisson === undefined}
+            />
           </Popover>
         </div>
       ),
     },
   ];
+
+  const onChange = (item) => {
+    item.pagepermisson = item.pagepermisson === 1 ? 0 : 1;
+    // console.log(item);
+    setDataSource([...dataSource]);
+
+    if (item.grade === 1) {
+      axios.patch(`http://localhost:5000/rights/${item.id}`, {
+        pagepermisson: item.pagepermisson,
+      });
+    }
+
+    if (item.grade === 2) {
+      axios.patch(`http://localhost:5000/children/${item.id}`, {
+        pagepermisson: item.pagepermisson,
+      });
+    }
+  };
+
+  const content = (item) => (
+    <div>
+      <Switch checked={item.pagepermisson} onChange={() => onChange(item)} />
+    </div>
+  );
 
   const showConfirm = (item) => {
     confirm({
