@@ -15,7 +15,13 @@ export default function RightList() {
   useEffect(() => {
     axios.get("http://localhost:5000/rights?_embed=children").then((res) => {
       // console.log(res.data);
-      setDataSource(res.data);
+      const dataList = res.data;
+      dataList.forEach((item) => {
+        if (item.children.length === 0) {
+          item.children = "";
+        }
+      });
+      setDataSource(dataList);
     });
   }, []);
 
