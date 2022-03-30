@@ -31,7 +31,7 @@ function SideMenu(props) {
 
   useEffect(() => {
     axios.get("http://localhost:5000/rights?_embed=children").then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       setMenu(res.data);
     });
   }, []);
