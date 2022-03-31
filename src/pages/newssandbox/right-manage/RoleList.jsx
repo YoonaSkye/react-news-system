@@ -14,6 +14,7 @@ export default function RoleList() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [rightsList, setRightsList] = useState([]);
   const [currentRights, setCurrentRights] = useState([]);
+  const [currentId, setCurrentId] = useState(0);
 
   useEffect(() => {
     axios.get("http://localhost:5000/roles").then((res) => {
@@ -55,6 +56,7 @@ export default function RoleList() {
             onClick={() => {
               setIsModalVisible(true);
               setCurrentRights(item.rights);
+              setCurrentId(item.id);
             }}
           />
         </div>
@@ -83,13 +85,34 @@ export default function RoleList() {
     axios.delete(`http://localhost:5000/roles/${item.id}`);
   };
 
-  const handleOk = () => {};
+  const handleOk = () => {
+    // 同步界面和后端数据
+    setIsModalVisible(false);
+    setDataSource(
+      dataSource.map((data) => {
+        if (data.id === currentId) {
+          return {
+            ...data,
+            rights: currentRights,
+          };
+        }
+        return data;
+      })
+    );
+
+    axios.patch(`http://localhost:5000/roles/${currentId}`, {
+      rights: currentRights,
+    });
+  };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  const onCheck = () => {};
+  const onCheck = (checkedKeys) => {
+    // console.log(checkedKeys);
+    setCurrentRights(checkedKeys.checked);
+  };
 
   return (
     <div>
@@ -109,6 +132,7 @@ export default function RoleList() {
       >
         <Tree
           checkable
+          checkStrictly
           checkedKeys={currentRights}
           onCheck={onCheck}
           treeData={rightsList}
