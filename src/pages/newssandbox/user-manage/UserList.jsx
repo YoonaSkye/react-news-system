@@ -73,11 +73,7 @@ export default function UserList() {
             type="primary"
             shape="circle"
             icon={<EditOutlined />}
-            onClick={() => {
-              // setIsModalVisible(true);
-              // setCurrentRights(item.rights);
-              // setCurrentId(item.id);
-            }}
+            onClick={() => {}}
             disabled={item.default}
           />
         </div>
@@ -92,7 +88,7 @@ export default function UserList() {
       // content: "Some descriptions",
       onOk() {
         // console.log(item);
-        deleteRole(item);
+        deleteUser(item);
       },
       onCancel() {
         console.log("Cancel");
@@ -100,8 +96,13 @@ export default function UserList() {
     });
   };
 
-  const deleteRole = () => {};
+  // 删除用户
+  const deleteUser = (item) => {
+    setDataSource(dataSource.filter((data) => data.id !== item.id));
+    axios.delete(`http://localhost:5000/users/${item.id}`);
+  };
 
+  // 增加用户
   const onAddCreate = (values) => {
     console.log("Received values of form: ", values);
     setIsAddVisible(false);
