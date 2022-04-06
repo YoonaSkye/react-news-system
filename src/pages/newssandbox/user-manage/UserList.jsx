@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Switch, Form, Input } from "antd";
+import { Table, Button, Modal, Switch, Form } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -9,6 +9,7 @@ import axios from "axios";
 
 // components
 import UserAddForm from "../../../components/user-manage/UserAddForm";
+import UserUpdateForm from "../../../components/user-manage/UserUpdateForm";
 
 const { confirm } = Modal;
 
@@ -17,6 +18,9 @@ export default function UserList() {
   const [regionList, setRegionList] = useState([]);
   const [rolesList, setRolesList] = useState([]);
   const [isAddVisible, setIsAddVisible] = useState(false);
+  const [isUpdateVisible, setIsUpdateVisible] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     axios
@@ -73,8 +77,8 @@ export default function UserList() {
             type="primary"
             shape="circle"
             icon={<EditOutlined />}
-            onClick={() => {}}
             disabled={item.default}
+            onClick={() => handleUpdate(item)}
           />
         </div>
       ),
@@ -126,6 +130,34 @@ export default function UserList() {
       });
   };
 
+  // 更新用户
+  const handleUpdate = (item) => {
+    setIsUpdateVisible(true);
+    setCurrentUser(item);
+    form.setFieldsValue(item);
+  };
+
+  const onUpdateCreate = (values) => {
+    // console.log(currentUser);
+    // console.log("Received values of form: ", values);
+    setIsUpdateVisible(false);
+
+    setDataSource(
+      dataSource.map((data) => {
+        if (data.id === currentUser.id) {
+          return {
+            ...data,
+            ...values,
+            role: rolesList.filter((item) => item.id === values.roleId)[0],
+          };
+        }
+        return data;
+      })
+    );
+
+    axios.patch(`http://localhost:5000/users/${currentUser.id}`, values);
+  };
+
   return (
     <div>
       <Button type="primary" onClick={() => setIsAddVisible(true)}>
@@ -145,6 +177,15 @@ export default function UserList() {
         onCancel={() => setIsAddVisible(false)}
         regionList={regionList}
         rolesList={rolesList}
+      />
+      <UserUpdateForm
+        visible={isUpdateVisible}
+        onCreate={onUpdateCreate}
+        onCancel={() => setIsUpdateVisible(false)}
+        regionList={regionList}
+        rolesList={rolesList}
+        currentUser={currentUser}
+        form={form}
       />
     </div>
   );
