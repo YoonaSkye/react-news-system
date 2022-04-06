@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Switch } from "antd";
+import { Table, Button, Modal, Switch, Form, Input } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -7,15 +7,33 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 
+// components
+import UserAddForm from "../../../components/user-manage/UserAddForm";
+
 const { confirm } = Modal;
 
 export default function UserList() {
   const [dataSource, setDataSource] = useState([]);
+  const [regionList, setRegionList] = useState([]);
+  const [rolesList, setRolesList] = useState([]);
+  const [isAddVisible, setIsAddVisible] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/users?_expand=role").then((res) => {
-      setDataSource(res.data);
-    });
+    axios
+      .get("http://localhost:5000/users?_expand=role")
+      .then((res) => setDataSource(res.data));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/regions")
+      .then((res) => setRegionList(res.data));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/roles")
+      .then((res) => setRolesList(res.data));
   }, []);
 
   const columns = [
@@ -84,8 +102,34 @@ export default function UserList() {
 
   const deleteRole = () => {};
 
+  const onAddCreate = (values) => {
+    console.log("Received values of form: ", values);
+    setIsAddVisible(false);
+    axios
+      .post(`http://localhost:5000/users`, {
+        ...values,
+        roleState: true,
+        default: false,
+      })
+      .then((res) => {
+        console.log(res.data);
+        // 由于我们需要的是连表查询的结果(users?_expand=role)
+        // 手动补充`role`字段，数据用于更新界面
+        setDataSource([
+          ...dataSource,
+          {
+            ...res.data,
+            role: rolesList.filter((data) => data.id === values.roleId)[0],
+          },
+        ]);
+      });
+  };
+
   return (
     <div>
+      <Button type="primary" onClick={() => setIsAddVisible(true)}>
+        添加用户
+      </Button>
       <Table
         columns={columns}
         dataSource={dataSource}
@@ -93,6 +137,13 @@ export default function UserList() {
         pagination={{
           pageSize: 5,
         }}
+      />
+      <UserAddForm
+        visible={isAddVisible}
+        onCreate={onAddCreate}
+        onCancel={() => setIsAddVisible(false)}
+        regionList={regionList}
+        rolesList={rolesList}
       />
     </div>
   );
