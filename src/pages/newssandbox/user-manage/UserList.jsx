@@ -59,7 +59,11 @@ export default function UserList() {
       title: "用户状态",
       dataIndex: "roleState",
       render: (roleState, record) => (
-        <Switch checked={roleState} disabled={record.default} />
+        <Switch
+          checked={roleState}
+          disabled={record.default}
+          onChange={() => handleStateChange(record)}
+        />
       ),
     },
     {
@@ -97,6 +101,15 @@ export default function UserList() {
       onCancel() {
         console.log("Cancel");
       },
+    });
+  };
+
+  // 用户状态开关配置
+  const handleStateChange = (item) => {
+    item.roleState = !item.roleState;
+    setDataSource([...dataSource]);
+    axios.patch(`http://localhost:5000/users/${item.id}`, {
+      roleState: item.roleState,
     });
   };
 
