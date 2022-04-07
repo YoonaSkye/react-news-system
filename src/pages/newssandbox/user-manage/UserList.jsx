@@ -12,6 +12,11 @@ import UserAddForm from "../../../components/user-manage/UserAddForm";
 import UserUpdateForm from "../../../components/user-manage/UserUpdateForm";
 
 const { confirm } = Modal;
+const roleObj = {
+  1: "superadmin",
+  2: "admin",
+  3: "editor",
+};
 
 export default function UserList() {
   const [dataSource, setDataSource] = useState([]);
@@ -21,12 +26,28 @@ export default function UserList() {
   const [isUpdateVisible, setIsUpdateVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [form] = Form.useForm();
-
+  const { roleId, username, region } = JSON.parse(
+    localStorage.getItem("token")
+  );
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/users?_expand=role")
-      .then((res) => setDataSource(res.data));
-  }, []);
+    axios.get("http://localhost:5000/users?_expand=role").then((res) => {
+      // 对于不要权限角色的用户，返回的用户列表根据权限进行过滤
+      // superadmin: 所有用户
+      // admin: admin & editor
+      // editor: editor
+      setDataSource(
+        roleObj[roleId] === "superadmin"
+          ? res.data
+          : [
+              ...res.data.filter(
+                (item) =>
+                  item.username === username ||
+                  (item.region === region && roleObj[item.roleId] === "editor")
+              ),
+            ]
+      );
+    });
+  }, [roleId, username, region]);
 
   useEffect(() => {
     axios

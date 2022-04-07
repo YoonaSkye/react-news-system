@@ -7,13 +7,13 @@ import axios from "axios";
 
 export default function Login(props) {
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    // console.log("Received values of form: ", values);
     axios
       .get(
         `http://localhost:5000/users?username=${values.username}&password=${values.password}&roleState=true&_expand=role`
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         if (res.data.length === 0) {
           message.error("用户名或者密码不正确!");
         } else {

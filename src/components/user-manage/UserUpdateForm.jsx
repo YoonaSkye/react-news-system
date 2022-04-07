@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Select } from "antd";
 const { Option } = Select;
+const roleObj = {
+  1: "superadmin",
+  2: "admin",
+  3: "editor",
+};
 
 const UserUpdateForm = ({
   visible,
@@ -93,8 +98,15 @@ const UserUpdateForm = ({
           }
         >
           <Select disabled={isDisable}>
+            {/* 
+              在更新表单中，对于admin & editor 禁止区域修改
+             */}
             {regionList.map((data) => (
-              <Option value={data.value} key={data.id}>
+              <Option
+                value={data.value}
+                key={data.id}
+                disabled={roleObj[data.roleId] !== "superadmin"}
+              >
                 {data.value}
               </Option>
             ))}
@@ -111,8 +123,15 @@ const UserUpdateForm = ({
           ]}
         >
           <Select onChange={(value) => handleChange(value)}>
+            {/* 
+              在更新表单中，对于admin & editor 禁止修改角色
+            */}
             {rolesList.map((data) => (
-              <Option value={data.id} key={data.id}>
+              <Option
+                value={data.id}
+                key={data.id}
+                disabled={roleObj[data.roleId] !== "superadmin"}
+              >
                 {data.roleName}
               </Option>
             ))}

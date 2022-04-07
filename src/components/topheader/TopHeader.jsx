@@ -17,10 +17,14 @@ const { Header } = Layout;
 
 function TopHeader(props) {
   const [collapsed, setCollapsed] = useState(false);
+  const {
+    role: { roleName },
+    username,
+  } = JSON.parse(localStorage.getItem("token"));
 
   const menu = (
     <Menu>
-      <Menu.Item key="0">超级管理员</Menu.Item>
+      <Menu.Item key="0">{roleName}</Menu.Item>
 
       <Menu.Item
         key="1"
@@ -49,7 +53,11 @@ function TopHeader(props) {
         />
       )}
       <div style={{ float: "right" }}>
-        <span>欢迎回来Sheldon!</span>
+        <span>
+          欢迎回来
+          <span style={{ color: "#8d69f1" }}>{username}</span>!
+        </span>
+
         <Dropdown overlay={menu}>
           <span>
             <Avatar size="large" icon={<UserOutlined />} /> <DownOutlined />
