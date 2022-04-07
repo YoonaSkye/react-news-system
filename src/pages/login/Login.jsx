@@ -1,12 +1,26 @@
 import React from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import "./Login.css";
+import axios from "axios";
 
-export default function Login() {
+export default function Login(props) {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    axios
+      .get(
+        `http://localhost:5000/users?username=${values.username}&password=${values.password}&roleState=true&_expand=role`
+      )
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.length === 0) {
+          message.error("用户名或者密码不正确!");
+        } else {
+          localStorage.setItem("token", JSON.stringify(res.data[0]));
+          props.history.push("/");
+        }
+      });
   };
   return (
     <div className="login">

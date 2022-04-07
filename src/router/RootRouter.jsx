@@ -22,7 +22,7 @@ export default function RootRouter() {
             localStorage.getItem("token") ? (
               <NewsSandbox />
             ) : (
-              <Redirect to="login" />
+              <Redirect to="/login" />
             )
           }
         />
