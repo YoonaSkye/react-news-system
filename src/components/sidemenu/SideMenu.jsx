@@ -4,12 +4,7 @@ import axios from "axios";
 
 // antd component
 import { Layout, Menu } from "antd";
-import {
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 
 // css
 import "./SideMenu.css";
@@ -28,6 +23,9 @@ const iconList = {
 
 function SideMenu(props) {
   const [menu, setMenu] = useState([]);
+  const {
+    role: { rights },
+  } = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     axios.get("http://localhost:5000/rights?_embed=children").then((res) => {
@@ -36,7 +34,8 @@ function SideMenu(props) {
     });
   }, []);
 
-  const checkPagePermisson = (item) => item.pagepermisson === 1;
+  const checkPagePermisson = (item) =>
+    item.pagepermisson === 1 && rights.includes(item.key);
 
   const renderMenu = (menuList) => {
     return menuList.map((menu) => {
