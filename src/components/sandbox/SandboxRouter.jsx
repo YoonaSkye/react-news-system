@@ -43,7 +43,7 @@ const SandboxRouter = () => {
       axios.get("http://localhost:5000/rights"),
       axios.get("http://localhost:5000/children"),
     ]).then((res) => {
-      console.log([...res[0].data, ...res[1].data]);
+      // console.log([...res[0].data, ...res[1].data]);
       setRouteList([...res[0].data, ...res[1].data]);
     });
   }, []);
