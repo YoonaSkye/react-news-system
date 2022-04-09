@@ -1,15 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { PageHeader, Steps, Button, Form, Input, Select } from "antd";
+import {
+  PageHeader,
+  Steps,
+  Button,
+  Form,
+  Input,
+  Select,
+  message,
+  notification,
+} from "antd";
 import "./News.css";
 import axios from "axios";
+import NewsEditor from "../../../components/news-manage/NewsEditor";
 
 const { Step } = Steps;
 const { Option } = Select;
 
-const NewsAdd = () => {
+const NewsAdd = (props) => {
   const [current, setCurrent] = useState(0);
   const [form] = Form.useForm();
   const [categoryList, setCategoryList] = useState([]);
+  const [formInfo, setFormInfo] = useState({});
+  const [content, setContent] = useState("");
+  const User = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     axios.get("http://localhost:5000/categories").then((res) => {
@@ -23,19 +36,53 @@ const NewsAdd = () => {
       form
         .validateFields()
         .then((values) => {
-          console.log(values);
+          // console.log(values);
+          setFormInfo(values);
           setCurrent(current + 1);
         })
         .catch((info) => {
           console.log("Validate Failed:", info);
         });
-      setCurrent(current + 1);
     } else {
-      setCurrent(current + 1);
+      if (content === "" || content.trim() === "<p></p>") {
+        message.error("新闻内容不能为空");
+      } else {
+        setCurrent(current + 1);
+      }
     }
   };
   const handlePrevious = () => {
     setCurrent(current - 1);
+  };
+
+  const handleSave = (auditState) => {
+    axios
+      .post("http://localhost:5000/news", {
+        ...formInfo,
+        content: content,
+        region: User.region ? User.region : "全球",
+        author: User.username,
+        roleId: User.roleId,
+        auditState: auditState,
+        publishState: 0,
+        createTime: Date.now(),
+        star: 0,
+        view: 0,
+        // "publishTime": 0
+      })
+      .then((res) => {
+        props.history.push(
+          auditState === 0 ? "/news-manage/draft" : "/audit-manage/list"
+        );
+
+        notification.info({
+          message: `通知`,
+          description: `您可以到${
+            auditState === 0 ? "草稿箱" : "审核列表"
+          }中查看您的新闻`,
+          placement: "bottomRight",
+        });
+      });
   };
 
   return (
@@ -96,15 +143,21 @@ const NewsAdd = () => {
             </Form.Item>
           </Form>
         </div>
-        <div className={current === 1 ? "" : "news-active"}>22222</div>
-        <div className={current === 2 ? "" : "news-active"}>33333</div>
+        <div className={current === 1 ? "" : "news-active"}>
+          <NewsEditor getContent={(value) => setContent(value)} />
+        </div>
+        <div className={current === 2 ? "" : "news-active"}></div>
       </div>
 
       <div style={{ marginTop: "50px" }}>
         {current === 2 && (
           <span>
-            <Button type="primary">保存草稿箱</Button>
-            <Button danger>提交审核</Button>
+            <Button type="primary" onClick={() => handleSave(0)}>
+              保存草稿箱
+            </Button>
+            <Button danger onClick={() => handleSave(1)}>
+              提交审核
+            </Button>
           </span>
         )}
         {current < 2 && (
