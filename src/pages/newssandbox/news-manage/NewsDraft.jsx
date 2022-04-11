@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, notification } from "antd";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 const { confirm } = Modal;
 
-const NewsDraft = () => {
+const NewsDraft = (props) => {
   const [dataSource, setDataSource] = useState([]);
   const { username } = JSON.parse(localStorage.getItem("token"));
 
@@ -60,11 +60,16 @@ const NewsDraft = () => {
               shape="circle"
               icon={<EditOutlined />}
               onClick={() => {
-                // props.history.push(`/news-manage/update/${item.id}`)
+                props.history.push(`/news-manage/update/${item.id}`);
               }}
             />
 
-            <Button type="primary" shape="circle" icon={<UploadOutlined />} />
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<UploadOutlined />}
+              onClick={() => handleCheck(item.id)}
+            />
           </div>
         );
       },
@@ -92,6 +97,23 @@ const NewsDraft = () => {
     // 当前页面同步状态 + 后端同步
     setDataSource(dataSource.filter((data) => data.id !== item.id));
     axios.delete(`/news/${item.id}`);
+  };
+
+  // 提交审核
+  const handleCheck = (id) => {
+    axios
+      .patch(`http://localhost:5000/news/${id}`, {
+        auditState: 1,
+      })
+      .then((res) => {
+        props.history.push("/audit-manage/list");
+
+        notification.info({
+          message: `通知`,
+          description: `您可以到${"审核列表"}中查看您的新闻`,
+          placement: "bottomRight",
+        });
+      });
   };
 
   return (

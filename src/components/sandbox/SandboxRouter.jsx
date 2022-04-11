@@ -17,6 +17,7 @@ import Unpublished from "../../pages/newssandbox/publish-manage/Unpublished";
 import Published from "../../pages/newssandbox/publish-manage/Published";
 import Sunset from "../../pages/newssandbox/publish-manage/Sunset";
 import NewsPreview from "../../pages/newssandbox/news-manage/NewsPreview";
+import NewsUpdate from "../../pages/newssandbox/news-manage/NewsUpdate";
 
 const LocalRouterMap = {
   "/home": Home,
@@ -27,6 +28,7 @@ const LocalRouterMap = {
   "/news-manage/draft": NewsDraft,
   "/news-manage/category": NewsCategory,
   "/news-manage/preview/:id": NewsPreview,
+  "/news-manage/update/:id": NewsUpdate,
   "/audit-manage/audit": Audit,
   "/audit-manage/list": AuditList,
   "/publish-manage/unpublished": Unpublished,
