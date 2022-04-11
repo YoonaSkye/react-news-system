@@ -16,6 +16,7 @@ import AuditList from "../../pages/newssandbox/audit-manage/AuditList";
 import Unpublished from "../../pages/newssandbox/publish-manage/Unpublished";
 import Published from "../../pages/newssandbox/publish-manage/Published";
 import Sunset from "../../pages/newssandbox/publish-manage/Sunset";
+import NewsPreview from "../../pages/newssandbox/news-manage/NewsPreview";
 
 const LocalRouterMap = {
   "/home": Home,
@@ -25,6 +26,7 @@ const LocalRouterMap = {
   "/news-manage/add": NewsAdd,
   "/news-manage/draft": NewsDraft,
   "/news-manage/category": NewsCategory,
+  "/news-manage/preview/:id": NewsPreview,
   "/audit-manage/audit": Audit,
   "/audit-manage/list": AuditList,
   "/publish-manage/unpublished": Unpublished,
@@ -49,7 +51,9 @@ const SandboxRouter = () => {
   }, []);
 
   const checkRoute = (item) => {
-    return LocalRouterMap[item.key] && item.pagepermisson;
+    return (
+      LocalRouterMap[item.key] && (item.pagepermisson || item.routepermisson)
+    );
   };
 
   const checkUserPermission = (item) => {
