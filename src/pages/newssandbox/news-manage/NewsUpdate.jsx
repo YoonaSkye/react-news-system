@@ -22,7 +22,6 @@ const NewsUpdate = (props) => {
   const [categoryList, setCategoryList] = useState([]);
   const [formInfo, setFormInfo] = useState({});
   const [content, setContent] = useState("");
-  const User = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     axios.get("http://localhost:5000/categories").then((res) => {

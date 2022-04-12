@@ -10,7 +10,7 @@ const AuditList = (props) => {
   useEffect(() => {
     /* 
     auditState: 0 - 草稿箱 / 1 - 审核中 / 2 - 已通过 / 3 - 未通过
-    publishState: 0 - s / 1 - s / 2 - s
+    publishState: 0 - 未发布 / 1 - 待发布 / 2 - 已发布 / 3 - 已下架
     */
     axios
       .get(
