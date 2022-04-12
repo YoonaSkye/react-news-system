@@ -7,6 +7,7 @@ const NewsPreview = (props) => {
   const [newsInfo, setNewsInfo] = useState(null);
   const auditList = ["未审核", "审核中", "已通过", "未通过"];
   const publishList = ["未发布", "待发布", "已上线", "已下线"];
+  const colorList = ["black", "orange", "green", "red"];
 
   useEffect(() => {
     axios
@@ -41,12 +42,12 @@ const NewsPreview = (props) => {
               {newsInfo.region}
             </Descriptions.Item>
             <Descriptions.Item label="审核状态">
-              <span style={{ color: "red" }}>
+              <span style={{ color: colorList[newsInfo.auditState] }}>
                 {auditList[newsInfo.auditState]}
               </span>
             </Descriptions.Item>
             <Descriptions.Item label="发布状态">
-              <span style={{ color: "red" }}>
+              <span style={{ color: colorList[newsInfo.publishState] }}>
                 {publishList[newsInfo.publishState]}
               </span>
             </Descriptions.Item>
