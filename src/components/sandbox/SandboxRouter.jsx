@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import axios from "axios";
+import { Spin } from "antd";
+import { connect } from "react-redux";
 
 // components & pages
 import Home from "../../pages/newssandbox/home/Home";
@@ -36,7 +38,7 @@ const LocalRouterMap = {
   "/publish-manage/sunset": Sunset,
 };
 
-const SandboxRouter = () => {
+const SandboxRouter = (props) => {
   const [routeList, setRouteList] = useState([]);
   const {
     role: { rights },
@@ -63,23 +65,31 @@ const SandboxRouter = () => {
   };
 
   return (
-    <Switch>
-      {routeList.map((item) => {
-        if (checkRoute(item) && checkUserPermission(item)) {
-          return (
-            <Route
-              path={item.key}
-              component={LocalRouterMap[item.key]}
-              key={item.key}
-            />
-          );
-        }
-        return null;
-      })}
-      <Redirect from="/" to="/home" exact />
-      {routeList.length > 0 && <Route path="*" component={NotFound} />}
-    </Switch>
+    <Spin size="large" spinning={props.isLoading}>
+      <Switch>
+        {routeList.map((item) => {
+          if (checkRoute(item) && checkUserPermission(item)) {
+            return (
+              <Route
+                path={item.key}
+                component={LocalRouterMap[item.key]}
+                key={item.key}
+              />
+            );
+          }
+          return null;
+        })}
+        <Redirect from="/" to="/home" exact />
+        {routeList.length > 0 && <Route path="*" component={NotFound} />}
+      </Switch>
+    </Spin>
   );
 };
 
-export default SandboxRouter;
+const mapStateToProps = (state) => {
+  return {
+    isLoading: state.LoadingReducer.isLoading,
+  };
+};
+
+export default connect(mapStateToProps)(SandboxRouter);
