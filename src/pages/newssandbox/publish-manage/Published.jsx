@@ -1,7 +1,15 @@
-import React from "react";
+import NewsPublish from "../../../components/publish-manage/NewsPublish";
+import usePublish from "../../../components/publish-manage/usePublish";
 
 const Published = () => {
-  return <div>Published</div>;
+  // publishState = 2 已发布
+  const { dataSource } = usePublish(2);
+
+  return (
+    <div>
+      <NewsPublish dataSource={dataSource} />
+    </div>
+  );
 };
 
 export default Published;
