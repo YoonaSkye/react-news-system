@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Table } from "antd";
+import { Table } from "antd";
 
 export default function NewsPublish(props) {
   const columns = [
